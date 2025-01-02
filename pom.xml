@@ -171,6 +171,7 @@
         <!-- APPLICATION dependencies -->
         <!-- ################################################################################################################## -->
         <dependency>
+            <!-- https://github.com/moquette-io/moquette -->
             <groupId>com.github.moquette-io.moquette</groupId>
             <artifactId>moquette-broker</artifactId>
             <version>v0.18.0</version>
