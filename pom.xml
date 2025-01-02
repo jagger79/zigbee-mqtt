@@ -19,19 +19,14 @@
         <spring-boot.version>${project.parent.version}</spring-boot.version>
         <spring-cloud-dependencies.version>2024.0.0</spring-cloud-dependencies.version>
 
-        <jaxb-maven-plugin.version>4.0.8</jaxb-maven-plugin.version>
-        <jaxb-runtime.version>4.0.5</jaxb-runtime.version>
-
-        <iban4j.version>3.2.10-RELEASE</iban4j.version>
         <mapstruct-processor.version>1.6.3</mapstruct-processor.version>
         <hibernate-jpamodelgen.version>6.6.3.Final</hibernate-jpamodelgen.version>
-        <graphql-java-extended-scalars.version>22.0</graphql-java-extended-scalars.version>
     </properties>
 
     <build>
         <resources>
             <resource>
-                <directory>${project.basedir}/src/main/resources</directory>
+                <directory>src/main/resources</directory>
                 <filtering>true</filtering>
             </resource>
         </resources>
@@ -111,6 +106,9 @@
     </dependencyManagement>
 
     <dependencies>
+        <!-- ################################################################################################################## -->
+        <!-- SPRING dependencies -->
+        <!-- ################################################################################################################## -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -181,12 +179,6 @@
             <artifactId>org.eclipse.paho.mqttv5.client</artifactId>
             <version>1.2.5</version>
         </dependency>
-
-        <!--        <dependency>-->
-        <!--            <groupId>io.moquette</groupId>-->
-        <!--            <artifactId>moquette-broker</artifactId>-->
-        <!--            <version>0.17</version>-->
-        <!--        </dependency>-->
 
         <!-- ################################################################################################################## -->
         <!-- TESTING dependencies -->
