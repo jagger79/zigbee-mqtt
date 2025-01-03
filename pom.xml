@@ -19,7 +19,7 @@
         <spring-boot.version>${project.parent.version}</spring-boot.version>
         <spring-cloud-dependencies.version>2024.0.0</spring-cloud-dependencies.version>
 
-        <mapstruct-processor.version>1.6.3</mapstruct-processor.version>
+        <mapstruct.version>1.6.3</mapstruct.version>
         <hibernate-jpamodelgen.version>6.6.3.Final</hibernate-jpamodelgen.version>
     </properties>
 
@@ -59,7 +59,7 @@
                         <path>
                             <groupId>org.mapstruct</groupId>
                             <artifactId>mapstruct-processor</artifactId>
-                            <version>${mapstruct-processor.version}</version>
+                            <version>${mapstruct.version}</version>
                         </path>
                         <path>
                             <groupId>org.projectlombok</groupId>
@@ -141,7 +141,7 @@
         <dependency>
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
-            <version>${mapstruct-processor.version}</version>
+            <version>${mapstruct.version}</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -173,6 +173,12 @@
             <groupId>com.github.moquette-io.moquette</groupId>
             <artifactId>moquette-broker</artifactId>
             <version>v0.18.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-reload4j</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.eclipse.paho</groupId>

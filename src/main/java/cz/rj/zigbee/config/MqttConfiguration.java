@@ -15,10 +15,10 @@ import org.eclipse.paho.mqttv5.client.MqttClient;
 import org.eclipse.paho.mqttv5.client.persist.MemoryPersistence;
 import org.eclipse.paho.mqttv5.client.persist.MqttDefaultFilePersistence;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Role;
-import org.springframework.core.env.ConfigurableEnvironment;
 
 import java.io.File;
 import java.util.List;
@@ -29,7 +29,6 @@ import java.util.List;
 @Slf4j
 class MqttConfiguration {
     private final ZigbeeProperties props;
-    private final ConfigurableEnvironment env;
 
     @Bean(destroyMethod = "stopServer")
     Server mqttBroker() throws Exception {
@@ -57,6 +56,7 @@ class MqttConfiguration {
     }
 
     @Bean(destroyMethod = "close")
+    @ConditionalOnExpression("#{zigbeeProperties.publisher.enabled}")
     MqttClient publisher(Server mqttBroker) throws Exception {
         var dataStore1 = new MqttDefaultFilePersistence(System.getProperty("java.io.tmpdir") + "/mqtt_client");
         var dataStore = new MemoryPersistence();
@@ -67,6 +67,7 @@ class MqttConfiguration {
     }
 
     @Bean(destroyMethod = "close")
+    @ConditionalOnExpression("#{zigbeeProperties.subscriber.enabled}")
     MqttClient subscriber(Server mqttBroker) throws Exception {
         var dataStore = new MemoryPersistence();
         MqttClient subClient = new MqttClient(props.getBroker().getServerUri(), "subscriber", dataStore, null);

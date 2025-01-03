@@ -1,5 +1,6 @@
 package cz.rj.zigbee.service;
 
+import cz.rj.zigbee.ZigbeeProperties;
 import io.moquette.broker.Server;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.mqtt.MqttMessageBuilders;
@@ -19,6 +20,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 public class MqttPublisherService {
     private final Server mqttBroker;
     private final MqttClient publisher;
+    private final ZigbeeProperties props;
 
     public void publish2() {
         MqttPublishMessage message = MqttMessageBuilders.publish()
@@ -43,7 +45,7 @@ public class MqttPublisherService {
 
     public void publishExit() throws Exception {
         var message = new MqttMessage("EXIT eclipse!!".getBytes());
-        message.setQos(0);
+        message.setQos(MqttQoS.AT_MOST_ONCE.value());
         message.setRetained(false);
 
         publisher.publish("/exit", message);
