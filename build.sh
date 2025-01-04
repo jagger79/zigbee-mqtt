@@ -11,10 +11,12 @@ OPTS="$OPTS -Dzigbee.subscriber.enabled=false"
 #-Dlogging.level.org.eclipse.paho.mqttv5.client=trace
 #-Dlogging.level.org.eclipse.paho.mqttv5.client.internal.CommsReceiver=info
 #-Dlogging.level.BufferManagement=trace
-export OPTS
 curr_dir=`pwd`
-export PACK_FILE="app.tgz"
-export HOST="rkad@smb"
+PACK_FILE="app.tgz"
+HOST="rkad@smb"
+#HOST="rkad@192.168.88.194"
+
+export OPTS HOST PACK_FILE
 
 rm -rf build/
 
@@ -33,7 +35,7 @@ echo server: unpacking...
 #export CMD="; (test -a ${artifactId}/bin/manual-stop.sh && ${artifactId}/bin/manual-stop.sh) || echo $?"
 export CMD="cd /srv; (tar -xf ${PACK_FILE}) || echo $?"
 set -x
-ssh -p8080 -o StrictHostKeyChecking=no rkad@smb "cd /srv; (tar -xf /srv/${PACK_FILE}) || echo $?"
+ssh -p8080 -o StrictHostKeyChecking=no ${HOST} "cd /srv; (tar -xf /srv/${PACK_FILE}) || echo $?"
 
 #echo launching...
 #cd build

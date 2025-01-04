@@ -58,6 +58,8 @@ public class ZigbeeProperties implements InitializingBean {
         Integer port = 1883;
         @NotBlank
         String dataDir;
+        @NotNull
+        Integer maximumMessageSize = 1024 * 1024 * 1024;
 
         public String getDataDir() {
             if (dataDir == null) {

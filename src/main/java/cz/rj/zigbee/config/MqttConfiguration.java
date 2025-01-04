@@ -42,6 +42,7 @@ class MqttConfiguration {
         final IConfig config = new ResourceLoaderConfig(new ClasspathResourceLoader());
         //config.setProperty(IConfig.DATA_PATH_PROPERTY_NAME, persistenceStoreDir.getAbsolutePath());
         config.setProperty(IConfig.DATA_PATH_PROPERTY_NAME, props.getBroker().getDataDir());
+        config.setProperty(IConfig.NETTY_MAX_BYTES_PROPERTY_NAME, props.getBroker().getMaximumMessageSize() + "");
 
         final Server mqttBroker = new Server();
         log.info("starting,{}", mqttBroker);

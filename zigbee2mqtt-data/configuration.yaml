@@ -1,26 +1,29 @@
 permit_join: true
+homeassistant: false
 mqtt:
-  base_topic: zigbee2mqtt
   server: mqtt://smb:1883
+  base_topic: zigbee2mqtt
 serial:
   port: /dev/ttyUSB0
+  adapter: ember
 frontend:
   port: 8080
 advanced:
-  network_key:
-    - 139
-    - 222
-    - 178
-    - 156
-    - 75
-    - 30
-    - 182
-    - 246
-    - 153
-    - 53
-    - 22
-    - 237
-    - 63
-    - 171
-    - 162
-    - 178
+  log_level: debug
+  log_rotation: false
+  log_output:
+    - console
+  homeassistant_legacy_entity_attributes: false
+  legacy_api: false
+  legacy_availability_payload: false
+availability:
+  active:
+    timeout: 10
+  passive:
+    timeout: 1500
+advanced.network_key: GENERATE
+device_options:
+  legacy: false
+devices:
+  '0xa4c1380da8740c0c':
+    friendly_name: '0xa4c1380da8740c0c'
