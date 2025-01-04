@@ -27,3 +27,7 @@ device_options:
 devices:
   '0xa4c1380da8740c0c':
     friendly_name: '0xa4c1380da8740c0c'
+  '0xd44867fffe4c30d0':
+    friendly_name: '0xd44867fffe4c30d0'
+  '0x84b4dbfffe0438af':
+    friendly_name: '0x84b4dbfffe0438af'
