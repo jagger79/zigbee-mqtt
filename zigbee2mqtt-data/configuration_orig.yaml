@@ -10,6 +10,9 @@ mqtt:
   # https://www.zigbee2mqtt.io/guide/configuration/mqtt.html
   server: mqtt://smb:1883
   base_topic: zigbee2mqtt
+  keepalive: 60
+  reject_unauthorized: false
+  version: 5
 
 # Zigbee Adapter path
 serial:

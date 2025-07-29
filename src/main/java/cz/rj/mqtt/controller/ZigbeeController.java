@@ -1,6 +1,6 @@
-package cz.rj.zigbee.controller;
+package cz.rj.mqtt.controller;
 
-import cz.rj.zigbee.service.MqttPublisherService;
+import cz.rj.mqtt.service.MqttPublisherService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestMapping;

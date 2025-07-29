@@ -1,26 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.4.1</version>
+        <version>4.0.0-M1</version>
+        <!--        <version>3.5.4</version>-->
         <relativePath/>
     </parent>
 
     <groupId>cz.rj</groupId>
-    <artifactId>zigbee-mqtt</artifactId>
+    <artifactId>mqtt</artifactId>
     <version>1.0.0-SNAPSHOT</version>
+    <description>MQTT server</description>
 
     <properties>
-        <java.version>23</java.version>
+        <java.version>21</java.version>
 
         <spring-boot.version>${project.parent.version}</spring-boot.version>
-        <spring-cloud-dependencies.version>2024.0.0</spring-cloud-dependencies.version>
-
-        <mapstruct.version>1.6.3</mapstruct.version>
-        <hibernate-jpamodelgen.version>6.6.3.Final</hibernate-jpamodelgen.version>
+        <spring-cloud-dependencies.version>2025.0.0</spring-cloud-dependencies.version>
     </properties>
 
     <build>
@@ -37,7 +37,10 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <classifier>uber</classifier>
+                    <arguments>
+                        <argument>--spring.config.name=application,infra,passwords,security</argument>
+                    </arguments>
+                    <classifier>-uber</classifier>
                 </configuration>
                 <executions>
                     <execution>
@@ -48,42 +51,74 @@
                     </execution>
                 </executions>
             </plugin>
-            <!--maven-compiler-plugin-->
+            <!-- git-commit-id-maven-plugin -->
+            <plugin>
+                <groupId>io.github.git-commit-id</groupId>
+                <artifactId>git-commit-id-maven-plugin</artifactId>
+                <version>9.0.2</version>
+                <configuration>
+                    <failOnNoGitDirectory>false</failOnNoGitDirectory>
+                    <verbose>false</verbose>
+                    <offline>true</offline>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>revision</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- maven-compiler-plugin -->
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <compilerArgs>
-                        <arg>-parameters</arg>
-                    </compilerArgs>
+                    <parameters>true</parameters>
                     <annotationProcessorPaths>
                         <path>
                             <groupId>org.mapstruct</groupId>
                             <artifactId>mapstruct-processor</artifactId>
-                            <version>${mapstruct.version}</version>
+                            <version>1.6.3</version>
                         </path>
                         <path>
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
-                            <version>${lombok.version}</version>
                         </path>
                         <path>
                             <groupId>org.springframework.boot</groupId>
                             <artifactId>spring-boot-configuration-processor</artifactId>
-                            <version>${spring-boot.version}</version>
                         </path>
                         <path>
-                            <groupId>org.hibernate</groupId>
+                            <groupId>org.hibernate.orm</groupId>
                             <artifactId>hibernate-jpamodelgen</artifactId>
-                            <version>${hibernate-jpamodelgen.version}</version>
+                            <version>7.0.0.Beta4</version>
                         </path>
                     </annotationProcessorPaths>
+                    <compilerArgs>
+                        <!-- https://mapstruct.org/documentation/stable/reference/html/ -->
+                        <arg>-Amapstruct.suppressGeneratorTimestamp=false</arg>
+                        <arg>-Amapstruct.suppressGeneratorVersionInfoComment=false</arg>
+                        <arg>-Amapstruct.verbose=true</arg>
+                        <arg>-Amapstruct.unmappedTargetPolicy=IGNORE</arg>
+                        <arg>-Amapstruct.defaultComponentModel=spring</arg>
+                    </compilerArgs>
                 </configuration>
             </plugin>
-            <!--maven-assembly-plugin-->
+            <!-- openapi-generator-maven-plugin -->
+            <plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <version>7.14.0</version>
+                <executions>
+                    <!-- https://github.com/OpenAPITools/openapi-generator/blob/master/docs/generators/java.md -->
+                </executions>
+            </plugin>
+            <!-- maven-assembly-plugin -->
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
             </plugin>
-            <!--maven-surefire-plugin-->
+            <!-- maven-surefire-plugin -->
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
@@ -95,6 +130,15 @@
 
     <dependencyManagement>
         <dependencies>
+            <!-- micrometer-tracing-bom -->
+            <dependency>
+                <groupId>io.micrometer</groupId>
+                <artifactId>micrometer-tracing-bom</artifactId>
+                <version>${micrometer-tracing.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- spring-cloud-dependencies -->
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
@@ -121,6 +165,10 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
+
+        <!-- ############################################################################################ -->
+        <!-- Distributed Tracing/Logging -->
+        <!-- ############################################################################################ -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-logging</artifactId>
@@ -132,53 +180,79 @@
         </dependency>
 
         <!-- ############################################################################################ -->
-        <!-- COMMON dependencies -->
+        <!-- OpenApi/JSON/Mapping utilities -->
         <!-- ############################################################################################ -->
         <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-xml</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jdk8</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.openapitools</groupId>
+            <artifactId>jackson-databind-nullable</artifactId>
+            <version>0.2.6</version>
+        </dependency>
+        <dependency>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-annotations</artifactId>
+            <version>2.2.34</version>
+        </dependency>
+        <dependency>
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
-            <version>${mapstruct.version}</version>
+            <version>1.6.3</version>
         </dependency>
+
+        <!-- ############################################################################################ -->
+        <!-- Common libraries -->
+        <!-- ############################################################################################ -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>${lombok.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>2.18.0</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-collections4</artifactId>
-            <version>4.4</version>
+            <version>4.5.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.18.0</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.20.0</version>
         </dependency>
         <dependency>
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
-            <version>1.2</version>
+            <version>1.3.5</version>
         </dependency>
 
         <!-- ############################################################################################ -->
         <!-- APPLICATION dependencies -->
         <!-- ############################################################################################ -->
+        <!--        <dependency>-->
+        <!--            &lt;!&ndash; https://github.com/moquette-io/moquette &ndash;&gt;-->
+        <!--            <groupId>com.github.moquette-io.moquette</groupId>-->
+        <!--            <artifactId>moquette-broker</artifactId>-->
+        <!--            <version>v0.18.0</version>-->
+        <!--            <exclusions>-->
+        <!--                <exclusion>-->
+        <!--                    <groupId>org.slf4j</groupId>-->
+        <!--                    <artifactId>slf4j-reload4j</artifactId>-->
+        <!--                </exclusion>-->
+        <!--            </exclusions>-->
+        <!--        </dependency>-->
         <dependency>
-            <!-- https://github.com/moquette-io/moquette -->
             <groupId>com.github.moquette-io.moquette</groupId>
             <artifactId>moquette-broker</artifactId>
             <version>v0.18.0</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-reload4j</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.eclipse.paho</groupId>
@@ -189,11 +263,6 @@
         <!-- ############################################################################################ -->
         <!-- TESTING dependencies -->
         <!-- ############################################################################################ -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-test</artifactId>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
     <repositories>

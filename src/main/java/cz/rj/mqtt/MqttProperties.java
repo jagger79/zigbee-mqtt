@@ -1,4 +1,4 @@
-package cz.rj.zigbee;
+package cz.rj.mqtt;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.validation.Valid;
@@ -15,12 +15,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.validation.annotation.Validated;
 
 @Configuration(proxyBeanMethods = false)
-@ConfigurationProperties("zigbee")
+@ConfigurationProperties("mqtt")
 @Validated
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Slf4j
-public class ZigbeeProperties implements InitializingBean {
+public class MqttProperties implements InitializingBean {
     /**
      * Broker configuration
      */
@@ -42,12 +42,12 @@ public class ZigbeeProperties implements InitializingBean {
 
     @PostConstruct
     public void initialize() {
-        log.info("Initializing Zigbee properties,broker={}", broker);
+        log.info("Initializing MQTT properties,broker={}", broker);
     }
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        log.info("Initializing Zigbee properties,broker={}", broker);
+        log.info("Initializing MQTT properties,{}", this);
     }
 
     @Data
@@ -60,13 +60,7 @@ public class ZigbeeProperties implements InitializingBean {
         String dataDir;
         @NotNull
         Integer maximumMessageSize = 1024 * 1024 * 1024;
-
-        public String getDataDir() {
-            if (dataDir == null) {
-                return System.getProperty("java.io.tmpdir") + "/mqtt";
-            }
-            return dataDir;
-        }
+        Boolean allowAnonymous = true;
 
         public String getServerUri() {
             // url = "ssl://localhost:8883";

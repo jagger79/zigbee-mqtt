@@ -2,7 +2,6 @@ spring.application.name: @project.artifactId@
 spring.main.banner-mode: off
 server.port: 8080
 
-zigbee:
-  broker:
-    host: smb
-    data-dir: ${java.io.tmpdir}/mqtt
+mqtt.broker:
+  host: localhost
+  data-dir: ${java.io.tmpdir}/mqtt

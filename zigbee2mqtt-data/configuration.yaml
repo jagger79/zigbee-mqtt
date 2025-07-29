@@ -3,6 +3,9 @@ homeassistant: false
 mqtt:
   server: mqtt://smb:1883
   base_topic: zigbee2mqtt
+  keepalive: 60
+  reject_unauthorized: false
+  version: 5
 serial:
   port: /dev/ttyUSB0
   adapter: ember
@@ -26,7 +29,7 @@ device_options:
   legacy: false
 devices:
   '0xa4c1380da8740c0c':
-    friendly_name: '0xa4c1380da8740c0c'
+    friendly_name: 'zasuvka'
   '0xd44867fffe4c30d0':
     friendly_name: '0xd44867fffe4c30d0'
   '0x84b4dbfffe0438af':

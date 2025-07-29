@@ -1,4 +1,4 @@
-package cz.rj.zigbee.config;
+package cz.rj.mqtt.service;
 
 import io.moquette.interception.AbstractInterceptHandler;
 import io.moquette.interception.messages.InterceptAcknowledgedMessage;
@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Slf4j
-class PublisherListener extends AbstractInterceptHandler {
+public class PublisherListener extends AbstractInterceptHandler {
     @Override
     public String getID() {
         return "EmbeddedLauncherPublishListener";

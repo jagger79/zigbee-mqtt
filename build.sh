@@ -13,8 +13,7 @@ OPTS="$OPTS -Dzigbee.subscriber.enabled=false"
 #-Dlogging.level.BufferManagement=trace
 curr_dir=`pwd`
 PACK_FILE="app.tgz"
-HOST="rkad@smb"
-#HOST="rkad@192.168.88.194"
+HOST="rkad@devel.osslite.cz"
 
 export OPTS HOST PACK_FILE
 
@@ -28,14 +27,14 @@ echo packing...
 tar -czf ${PACK_FILE} build/
 
 echo copy to server...
-scp -P8080 ${PACK_FILE} ${HOST}:/srv
+scp -P8080 ${PACK_FILE} ${HOST}:/apps/mqtt/
 rm -f ${PACK_FILE}
 
 echo server: unpacking...
 #export CMD="; (test -a ${artifactId}/bin/manual-stop.sh && ${artifactId}/bin/manual-stop.sh) || echo $?"
-export CMD="cd /srv; (tar -xf ${PACK_FILE}) || echo $?"
+export CMD="cd /apps/mqtt; (tar -xf ${PACK_FILE}) || echo $?"
 set -x
-ssh -p8080 -o StrictHostKeyChecking=no ${HOST} "cd /srv; (tar -xf /srv/${PACK_FILE}) || echo $?"
+ssh -p8080 -o StrictHostKeyChecking=no ${HOST} "cd /apps/mqtt; (tar -xf /apps/mqtt/${PACK_FILE}) || echo $?"
 
 #echo launching...
 #cd build
