@@ -1,0 +1,56 @@
+# https://www.zigbee2mqtt.io/guide/configuration/mqtt.html#server-connection
+
+# Let new devices join our zigbee network
+# - for auto pair another zigbee device
+permit_join: true
+homeassistant: false
+
+# Docker Compose makes the MQTT-Server available using "mqtt" hostname
+mqtt:
+  # https://www.zigbee2mqtt.io/guide/configuration/mqtt.html
+  server: mqtt://smb:1883
+  base_topic: zigbee2mqtt
+  keepalive: 60
+  reject_unauthorized: false
+  version: 5
+
+# Zigbee Adapter path
+serial:
+  port: /dev/ttyUSB0
+  # Adapter type, allowed values: `zstack`, `ember`, `deconz`, `zigate` or `zboss`
+  adapter: ember
+
+# Enable the Zigbee2MQTT frontend
+frontend:
+  port: 8080
+  # Optional, empty by default to listen on both IPv4 and IPv6. Opens a unix socket when given a path instead of an address (e.g. '/run/zigbee2mqtt/zigbee2mqtt.sock')
+  # Don't set this if you use Docker or the Home Assistant add-on unless you're sure the chosen IP is available inside the container
+  #host: 0.0.0.0
+  # Optional, url on which the frontend can be reached, currently only used for the Home Assistant device configuration page
+  #url: 'https://zigbee2mqtt.myhouse.org'
+
+# Let Zigbee2MQTT generate a new network key on first start
+advanced:
+  log_level: debug
+  # Optional: Rotate log every 10MB around 3 files (default: true)
+  log_rotation: false
+  # Optional: Output location of the log (default: shown below), leave empty to suppress logging (log_output: [])
+  # possible options: 'console', 'file', 'syslog'
+  log_output:
+    - console
+
+# The availability feature checks whether your devices are online. The availability state of a device is published to
+# zigbee2mqtt/[FRIENDLY_NAME]/availability with payload {"state":"online"} or {"state":"offline"}
+# (this message is a retained MQTT message).
+availability:
+  enabled: true
+  active:
+    # Time after which an active device will be marked as offline in
+    # minutes (default = 10 minutes)
+    timeout: 10
+  passive:
+    # Time after which a passive device will be marked as offline in
+    # minutes (default = 1500 minutes aka 25 hours)
+    timeout: 1500
+
+advanced.network_key: GENERATE

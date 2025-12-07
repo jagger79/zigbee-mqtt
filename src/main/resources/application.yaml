@@ -1,7 +1,8 @@
-spring.application.name: @project.artifactId@
-spring.main.banner-mode: off
 server.port: 8080
+spring.main.banner-mode: off
+spring.application.name: @project.artifactId@
 
-api:
-  base-path:
-    prefix: "/"
+mqtt.broker:
+  data-dir: ${java.io.tmpdir}/mqtt
+mqtt.client:
+  host: localhost
