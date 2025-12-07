@@ -1,6 +1,6 @@
 package cz.rj.mqtt.controller;
 
-import cz.rj.mqtt.service.MqttPublisherService;
+import cz.rj.mqtt.service.PublisherService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RequiredArgsConstructor
 public class ZigbeeController {
-    private final MqttPublisherService service;
+    private final PublisherService service;
 
     @RequestMapping("test")
     public void test() throws Exception {

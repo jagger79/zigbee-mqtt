@@ -58,9 +58,19 @@ public class MqttProperties implements InitializingBean {
         Integer port = 1883;
         @NotBlank
         String dataDir;
-        @NotNull
-        Integer maximumMessageSize = 1024 * 1024 * 1024;
-        Boolean allowAnonymous = true;
+
+        public String getServerUri() {
+            // url = "ssl://localhost:8883";
+            return getProtocol() + "://" + getHost() + ":" + getPort();
+        }
+    }
+
+    @Data
+    @FieldDefaults(level = AccessLevel.PRIVATE)
+    public static class MqttClientConfig {
+        String protocol = "tcp";
+        String host = "localhost";
+        Integer port = 1883;
 
         public String getServerUri() {
             // url = "ssl://localhost:8883";

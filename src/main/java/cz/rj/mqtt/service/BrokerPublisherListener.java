@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Slf4j
-public class PublisherListener extends AbstractInterceptHandler {
+public class BrokerPublisherListener extends AbstractInterceptHandler {
     @Override
     public String getID() {
         return "EmbeddedLauncherPublishListener";

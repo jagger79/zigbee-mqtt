@@ -3,13 +3,11 @@ package cz.rj.mqtt;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 
-/**
- * @see <a href="https://moquette-io.github.io/moquette/documentation.html">Doc</a>
- */
+/// [Moquette doc](https://moquette-io.github.io/moquette/documentation.html)
+///
 @SpringBootApplication
 public class MqttApplication {
     public static void main(String[] args) {
-        new SpringApplicationBuilder(MqttApplication.class)
-                .run(args);
+        new SpringApplicationBuilder(MqttApplication.class).run(args);
     }
 }

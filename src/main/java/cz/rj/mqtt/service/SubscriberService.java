@@ -12,7 +12,7 @@ import org.eclipse.paho.mqttv5.common.packet.MqttProperties;
 
 @Slf4j
 @RequiredArgsConstructor
-public class SubscriberCallback implements MqttCallback {
+public class SubscriberService implements MqttCallback {
     private final MqttClient client;
 
     int m_numReceived = 0;
@@ -30,7 +30,8 @@ public class SubscriberCallback implements MqttCallback {
     }
 
     @Override
-    public void messageArrived(String topic, MqttMessage message) throws Exception {
+    public void messageArrived(String topic,
+                               MqttMessage message) {
         //println "Received message ${new String(message.payload)} on topic [${topic}]"
         if (!firstMessageReceived) {
             m_startTime = System.currentTimeMillis();
