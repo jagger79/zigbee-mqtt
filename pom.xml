@@ -10,17 +10,19 @@
         <relativePath/>
     </parent>
 
-    <groupId>cz.rj</groupId>
+    <groupId>cz.smartiot</groupId>
     <artifactId>mqtt</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <description>MQTT server</description>
 
     <properties>
-        <java.version>21</java.version>
+        <java.version>25</java.version>
 
         <spring-boot.version>${project.parent.version}</spring-boot.version>
         <mapstruct-processor.version>1.6.3</mapstruct-processor.version>
-        <native-maven-plugin.version>0.11.0</native-maven-plugin.version>
+        <native-maven-plugin.version>0.11.3</native-maven-plugin.version>
+
+        <docker.name>nexus.osslite.cz/docker/mqtt</docker.name>
     </properties>
 
     <build>
@@ -89,7 +91,7 @@
                         <path>
                             <groupId>org.hibernate.orm</groupId>
                             <artifactId>hibernate-jpamodelgen</artifactId>
-                            <version>7.2.0.CR3</version>
+                            <version>7.2.0.Final</version>
                         </path>
                     </annotationProcessorPaths>
                     <compilerArgs>
@@ -122,22 +124,79 @@
                     <excludedGroups>cz.rj.tests.integration.Integration</excludedGroups>
                 </configuration>
             </plugin>
+            <!-- docker-maven-plugin -->
+            <plugin>
+                <groupId>io.fabric8</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <version>0.48.0</version>
+                <configuration>
+                    <authConfig>
+                        <username>devel</username>
+                        <password>devel</password>
+                    </authConfig>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>docker-build</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>build</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>docker-push</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>push</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <!-- native-maven-plugin -->
-            <!--            <plugin>-->
-            <!--                <groupId>org.graalvm.buildtools</groupId>-->
-            <!--                <artifactId>native-maven-plugin</artifactId>-->
-            <!--                <version>${native-maven-plugin.version}</version>-->
-            <!--                <extensions>true</extensions>-->
-            <!--                <executions>-->
-            <!--                    <execution>-->
-            <!--                        <id>build-native</id>-->
-            <!--                        <goals>-->
-            <!--                            <goal>compile-no-fork</goal>-->
-            <!--                        </goals>-->
-            <!--                        <phase>package</phase>-->
-            <!--                    </execution>-->
-            <!--                </executions>-->
-            <!--            </plugin>-->
+            <plugin>
+                <!-- https://github.com/oracle/graal/blob/master/docs/reference-manual/native-image/BuildOutput.md -->
+                <groupId>org.graalvm.buildtools</groupId>
+                <artifactId>native-maven-plugin</artifactId>
+                <version>${native-maven-plugin.version}</version>
+                <configuration>
+                    <buildArgs combine.children="append">
+                        <buildArg>-O2</buildArg>
+                        <buildArg>--emit build-report</buildArg>
+                        <buildArg>--gc=G1</buildArg>
+                    </buildArgs>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>build-native</id>
+                        <phase>none</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/graal</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- music-maven-plugin -->
+            <plugin>
+                <groupId>software.xdev</groupId>
+                <artifactId>music-maven-plugin</artifactId>
+                <version>2.0.0</version>
+                <!-- You might also want to add <inherited>false</inherited> so not every child executes this -->
+                <executions>
+                    <execution>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>music</goal>
+                        </goals>
+                        <configuration>
+                            <!--<defaultVolumeDB>50</defaultVolumeDB>-->
+                            <shuffle>true</shuffle>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
@@ -252,7 +311,13 @@
         <dependency>
             <groupId>com.github.moquette-io.moquette</groupId>
             <artifactId>moquette-broker</artifactId>
-            <version>v0.18.0</version>
+            <version>0.18.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-reload4j</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.eclipse.paho</groupId>
@@ -269,17 +334,6 @@
         <repository>
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
-        </repository>
-
-        <repository>
-            <id>bintray</id>
-            <url>https://jcenter.bintray.com</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
         </repository>
     </repositories>
 </project>

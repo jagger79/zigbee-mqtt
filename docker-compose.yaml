@@ -1,25 +1,93 @@
-#version: '3.8'
-services:
-#  mqtt:
-#    image: eclipse-mosquitto:2.0
-#    restart: unless-stopped
-#    volumes:
-#      - './mosquitto-data:/mosquitto'
-#    ports:
-#      - '1883:1883'
-#      - '9001:9001'
-#    command: 'mosquitto -c /mosquitto-no-auth.conf'
+name: mqtt
 
-  zigbee2mqtt:
-    container_name: zigbee2mqtt
-    restart: unless-stopped
-    image: koenkk/zigbee2mqtt
+# BE AWARE !
+#
+# I cannot use their image, it is only DEV -dev
+#image: hashicorp/vault
+# I've built my own from theirs
+#
+services:
+  hashicorp-vault:
+    container_name: mqtt
+    #    depends_on:
+    #      setup:
+    #        condition: service_healthy
+    image: nexus.osslite.cz/docker/mqtt
+    #user: devel
+
     volumes:
-      - ./zigbee2mqtt-data:/app/data
-      - /run/udev:/run/udev:ro
+      - /apps/mqtt/data:/apps/mqtt/data
+
+    labels:
+      production_status: "PROD"
+
+    #network_mode: host
+    networks:
+      - cloud
+
+    logging:
+      #      driver: "none"
+      #      driver: "json-file"
+      #      driver: "local"
+      options:
+        max-size: 10m
+        max-file: "3"
+        #labels: testing
+        #env: "os"
+
     ports:
-      - "8081:8080"
+      - 8083:8080
+      - 1883:1883
+
     environment:
-      - TZ=Europe/Prague
-    devices:
-      - /dev/ttyUSB0:/dev/ttyUSB0
+      - server.port=8080
+      - mqtt.publisher.enabled=false
+      - mqtt.subscriber.enabled=false
+      - mqtt.broker.data-dir=/apps/mqtt/data
+
+    #restart: always
+
+    # https://docs.docker.com/reference/compose-file/services/
+    mem_limit: 1gb
+    cpu_count: 1
+
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 100000
+        hard: 1000000
+      nproc:
+        soft: 100000
+        hard: 1000000
+
+    #healthcheck:
+    #  test: [ "CMD-SHELL", "sh -c 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}'" ]
+    #  interval: 10s
+    #  timeout: 10s
+    #  retries: 3
+
+networks:
+  cloud:
+    #    driver: bridge
+    #    driver: overlay
+    #    attachable: true
+    external: true
+
+#volumes:
+#  certs:
+#    external:
+#      name: el_certs
+#  jvm:
+#    external:
+#      name: el_jvm
+#  logs:
+#    external:
+#      name: el_logs
+#  esdata01:
+#    external:
+#      name: el_01
+#  kibanadata:
+#    external:
+#      name: kibana_01
